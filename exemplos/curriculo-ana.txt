@@ -1,0 +1,12 @@
+Ana Souza (candidata fictícia)
+Desenvolvedora Backend
+
+Experiência
+- Fintech XPTO (2021-atual): APIs REST em Node.js e TypeScript, PostgreSQL com Prisma,
+  autenticação OAuth2, deploy em AWS com Docker. Cobertura de testes de 80% com Jest.
+- Agência Y (2019-2021): sistemas internos em Python/Django e MySQL.
+
+Projetos
+- Chatbot de atendimento usando a API do Claude para classificar chamados.
+
+Formação: Ciência da Computação

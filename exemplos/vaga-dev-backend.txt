@@ -1,0 +1,12 @@
+Desenvolvedor(a) Backend Pleno
+
+Obrigatórios:
+- 3+ anos com Node.js ou Python em produção
+- Banco de dados relacional (PostgreSQL de preferência)
+- APIs REST e autenticação (JWT/OAuth)
+- Git e revisão de código
+
+Diferenciais:
+- Docker e deploy em nuvem (AWS, Vercel ou GCP)
+- Integração com APIs de IA (LLMs)
+- Testes automatizados

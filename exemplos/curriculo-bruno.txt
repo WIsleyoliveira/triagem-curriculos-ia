@@ -1,0 +1,9 @@
+Bruno Lima (candidato fictício)
+Desenvolvedor Front-end
+
+Experiência
+- Loja Z (2023-atual): telas em React e Next.js, consumo de APIs REST, Tailwind.
+- Estágio na Startup W (2022-2023): landing pages em HTML/CSS e um pouco de Node.js com Express.
+
+Cursos: SQL básico, Git e GitHub.
+Formação: Análise e Desenvolvimento de Sistemas (cursando)
