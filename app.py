@@ -1,12 +1,12 @@
 """Triagem de Currículos com IA: descrição da vaga + currículos -> ranking justificado."""
 
-import base64
 import csv
 import io
 from typing import Literal
 
 import streamlit as st
 from pydantic import BaseModel, Field
+from pypdf import PdfReader
 
 from ia import ErroIA, extrair
 
@@ -34,24 +34,24 @@ currículo. Avalie só competências e experiência: ignore idade, gênero, esta
 foto, endereço e qualquer outro dado pessoal que não tenha relação com o trabalho.
 Não presuma competências que o currículo não mostra. A decisão final é do recrutador."""
 
-TIPOS = {"pdf": "application/pdf", "txt": "text/plain", "md": "text/plain"}
+TIPOS = ["pdf", "txt", "md"]
 
 
-def bloco_do_curriculo(nome: str, dados: bytes) -> dict:
-    tipo = TIPOS[nome.rsplit(".", 1)[-1].lower()]
-    if tipo == "application/pdf":
-        fonte = {"type": "base64", "media_type": tipo, "data": base64.standard_b64encode(dados).decode()}
-    else:
-        fonte = {"type": "text", "media_type": "text/plain", "data": dados.decode("utf-8", errors="ignore")}
-    return {"type": "document", "source": fonte, "title": nome}
+def texto_do_curriculo(nome: str, dados: bytes) -> str:
+    if nome.lower().endswith(".pdf"):
+        texto = "\n".join(p.extract_text() or "" for p in PdfReader(io.BytesIO(dados)).pages).strip()
+        if not texto:
+            raise ErroIA("PDF sem texto (provavelmente escaneado).")
+        return texto
+    return dados.decode("utf-8", errors="ignore")
 
 
 def avaliar(vaga: str, nome: str, dados: bytes) -> Avaliacao:
-    conteudo = [
-        bloco_do_curriculo(nome, dados),
-        {"type": "text", "text": f"<vaga>\n{vaga}\n</vaga>\n\nAvalie o currículo acima para esta vaga."},
-    ]
-    return extrair(conteudo, Avaliacao, INSTRUCOES)
+    texto = (
+        f"<curriculo>\n{texto_do_curriculo(nome, dados)}\n</curriculo>\n\n"
+        f"<vaga>\n{vaga}\n</vaga>\n\nAvalie o currículo para esta vaga."
+    )
+    return extrair(texto, Avaliacao, INSTRUCOES)
 
 
 def ranking_em_csv(avaliacoes: list[Avaliacao]) -> str:
@@ -72,7 +72,7 @@ st.caption("Cole a vaga, envie os currículos e receba um ranking com a justific
 
 esquerda, direita = st.columns(2)
 vaga = esquerda.text_area("Descrição da vaga", height=300, placeholder="Cargo, requisitos obrigatórios, diferenciais…")
-curriculos = direita.file_uploader("Currículos (PDF ou TXT)", type=list(TIPOS), accept_multiple_files=True)
+curriculos = direita.file_uploader("Currículos (PDF ou TXT)", type=TIPOS, accept_multiple_files=True)
 
 if st.button("Avaliar candidatos", type="primary", disabled=not (vaga.strip() and curriculos)):
     avaliacoes: list[Avaliacao] = []
